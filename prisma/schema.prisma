@@ -1,0 +1,226 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  OWNER
+  MEMBER
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+  buroClave     String?   // Campo para la clave de Buró de Crédito
+  buroPassword  String?   // Campo para la contraseña de Buró de Crédito
+
+  teamMembers TeamMember[]
+  accounts    Account[]
+  sessions    Session[]
+  invitations Invitation[]
+  reports     Report[]
+}
+
+
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  domain      String?  @unique
+  defaultRole Role     @default(MEMBER)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  members       TeamMember[]
+  invitations   Invitation[]
+  apiKeys       ApiKey[]
+  buroConfigs   BuroConfig[]
+  circuloConfig CirculoConfig?
+  reports       Report[]
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  teamId    String
+  userId    String
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([userId])
+}
+
+model Invitation {
+  id        String   @id @default(uuid())
+  teamId    String
+  email     String
+  role      Role     @default(MEMBER)
+  token     String   @unique
+  expires   DateTime
+  invitedBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  user User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, email])
+}
+
+model PasswordReset {
+  id        BigInt   @id @default(autoincrement())
+  email     String
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+}
+
+model ApiKey {
+  id         String    @id @default(uuid())
+  name       String
+  teamId     String
+  hashedKey  String    @unique
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  expiresAt  DateTime?
+  lastUsedAt DateTime?
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
+
+enum BuroConfigType {
+  PROSPECTOR
+  REPORTE
+}
+
+model BuroConfig {
+  clave     String
+  password  String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  teamId    String
+  type      BuroConfigType
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@id([teamId, type])
+}
+
+model CirculoConfig {
+  id        String   @id @default(uuid())
+  clave     String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  teamId    String   @unique
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id                    String   @id @default(uuid())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  status                String   @default("Pending")
+  firstName             String
+  maternalLastName      String
+  paternalLastName      String
+  birthDate             String
+  rfc                   String
+  email                 String?
+  phone                 String?
+  nationality           String?
+  street                String
+  neighborhood          String
+  city                  String
+  municipalityOrBorough String?
+  state                 String
+  postalCode            String
+  response              Json?
+  requestedAmount       Decimal?
+  monthlyIncome         Decimal? @default(0)
+  netMonthlyIncome      Decimal? @default(0)
+  monthlyExpense        Decimal? @default(0)
+  occupation            String?
+  company               String?  @default("")
+  employmentDuration    Int?     @default(0)
+  residenceDuration     Int?     @default(0)
+  reportType            String   @default("")
+  score                 Int      @default(0)
+  scoreErrors           String?  @default("")
+
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+}
+
+model Configuration {
+  id                         String   @id @default(uuid())
+  teamId                     String   @unique
+  created_at                 DateTime @default(now())
+  updated_at                 DateTime @updatedAt
+  edad                       Int[]
+  tiempo_domicilio           Int      @default(8)
+  tiempo_empleo              Int      @default(10)
+  empleos_restringidos       String[]
+  nivel_endeudamiento        Float[]
+  numero_consultas           Int      @default(3)
+  icc                        Int[]
+  score                      Int[]
+  mop                        String[]
+  tiempo_mop                 Int      @default(6)
+  nivel_prestamos            Float[]
+  tableProductsConfiguration Json?
+}
