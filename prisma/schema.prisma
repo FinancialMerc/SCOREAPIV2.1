@@ -169,42 +169,44 @@ model CirculoConfig {
 }
 
 model Report {
-  id                    String   @id @default(uuid())
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  status                String   @default("Pending")
-  firstName             String
-  maternalLastName      String
-  paternalLastName      String
-  birthDate             String
-  rfc                   String
-  email                 String?
-  phone                 String?
-  nationality           String?
-  street                String
-  neighborhood          String
-  city                  String
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  status      String   @default("Pending")
+  numberControl String?
+  firstName   String
+  maternalLastName String
+  paternalLastName String
+  birthDate   String
+  rfc         String
+  email       String?
+  phone       String?
+  nationality String?
+  street      String
+  neighborhood String
+  city        String
   municipalityOrBorough String?
-  state                 String
-  postalCode            String
-  response              Json?
-  requestedAmount       Decimal?
-  monthlyIncome         Decimal? @default(0)
-  netMonthlyIncome      Decimal? @default(0)
-  monthlyExpense        Decimal? @default(0)
-  occupation            String?
-  company               String?  @default("")
-  employmentDuration    Int?     @default(0)
-  residenceDuration     Int?     @default(0)
-  reportType            String   @default("")
-  score                 Int      @default(0)
-  scoreErrors           String?  @default("")
-
+  state       String
+  postalCode  String
+  response    Json?
+  requestedAmount Decimal?
+  monthlyIncome Decimal? @default(0)
+  netMonthlyIncome Decimal? @default(0)
+  monthlyExpense Decimal? @default(0)
+  occupation  String?
+  company     String?  @default("")
+  employmentDuration Int? @default(0)
+  residenceDuration Int? @default(0)
+  reportType  String   @default("")
+  score       Int      @default(0)
+  scoreErrors String?  @default("")
+  nipCodeCode String?
   teamId String
-  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  team   Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
   userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user   User @relation(fields: [userId], references: [id], onDelete: Restrict)
 }
+
 
 model Configuration {
   id                         String   @id @default(uuid())
@@ -224,3 +226,24 @@ model Configuration {
   nivel_prestamos            Float[]
   tableProductsConfiguration Json?
 }
+
+model NipCode {
+  id          String   @id @default(uuid())
+  email       String
+  code        String   @unique // Hacemos que el campo 'code' sea único
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+  isVerified  Boolean  @default(false)
+  userId      String?
+
+}
+model FormLink {
+  id          String   @id @default(uuid())
+  token       String   @unique
+  isUsed      Boolean  @default(false)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  data        Json?    // Datos adicionales como el teamSlug
+}
+
+

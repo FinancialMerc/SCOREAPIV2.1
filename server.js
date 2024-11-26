@@ -6,6 +6,12 @@ const path = require('path');
 const fs = require('fs').promises;
 const app = express();
 const getTokenRoute = require('./src/routes/getToken');
+const fileRoutes = require('./src/routes/fileRoutes')
+const generateNipRoutes = require('./src/routes/generateNip');
+const verifyNipRoutes = require('./src/routes/verifyNip'); 
+const generateLinkRoutes = require('./src/routes/generateLink');
+const formRoutes = require('./src/routes/validateForm');
+const validateTokenRoutes = require('./src/routes/validateForm');
 
 app.use(express.json());
 app.use(cors());
@@ -46,9 +52,18 @@ app.get('/generate-pdf/:fileName', async (req, res, next) => {
 
 app.use('/api', getTokenRoute);
 
+app.use('/api/files', fileRoutes);
+
 app.get('/', (res) => {
     res.send('Welcome to the API');
 });
+
+app.use('/api/nip', generateNipRoutes);
+app.use('/api/nip', verifyNipRoutes);
+app.use('/api/links', generateLinkRoutes);
+app.use('/api/forms', formRoutes);
+app.use('/api/links', validateTokenRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

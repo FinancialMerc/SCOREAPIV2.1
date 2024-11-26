@@ -11,7 +11,7 @@ class MensajesService {
 
         // Obtener el campo mensajesAlerta del resumenReporte
         const mensajesAlerta = reporteData.reporte.respuesta.persona.resumenReporte[0].mensajesAlerta;
-
+        console.log(mensajesAlerta, "mensajes alerta");
         // Generar contenido de los mensajes de alerta
         let mensajesContent = '';
         if (mensajesAlerta !== 'NNNNN') {

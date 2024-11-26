@@ -20,9 +20,11 @@ router.post('/obtenerReporte', async (req, res, next) => {
         const reporte = await ReportService.obtenerReporte({ userId, generalInformation, addressInformation });
         console.log("Reporte obtenido:", reporte);
 
+        // Extraer número de control del reporte
+        const numberControl = reporte.reporte.respuesta.persona.encabezado.numeroControlConsulta;
+        console.log(numberControl, "number");
         // Generación de un nombre de archivo único con userId y timestamp
-        const timestamp = Date.now();
-        const pdfFileName = `reporte_${userId}_${timestamp}.pdf`;
+        const pdfFileName = `reporte_${generalInformation.rfc}.pdf`;
         const pdfFilePath = path.join(__dirname, '../Downloads', pdfFileName);
 
         // Generación del PDF a partir del reporte
@@ -32,7 +34,7 @@ router.post('/obtenerReporte', async (req, res, next) => {
         await fs.access(pdfFilePath);
         
         // Enviamos la respuesta con el nombre del archivo generado para que el frontend pueda descargarlo
-        res.status(200).json({ message: 'Reporte generado con éxito', fileName: pdfFileName });
+        res.status(200).json({ message: 'Reporte generado con éxito', fileName: pdfFileName,  numberControl });
 
     } catch (error) {
         console.error("Error al obtener el reporte:", error);

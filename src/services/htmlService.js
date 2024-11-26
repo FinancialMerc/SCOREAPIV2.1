@@ -9,8 +9,8 @@ const detalleConsultasService = require('./detalleConsulta');
 
 class HtmlService {
     async generarHtml(reporteData, filePath) {
-    //  const jsonFilePath = path.join(__dirname, '../Downloads/reporteData.json');
-    // fs.writeFileSync(jsonFilePath, JSON.stringify(reporteData, null, 2), 'utf8');
+    //const jsonFilePath = path.join(__dirname, '../Downloads/reporteData.json');
+    //fs.writeFileSync(jsonFilePath, JSON.stringify(reporteData, null, 2), 'utf8');
     const fecha = new Date();
     const fechaFormateada = fecha.toLocaleDateString('es-ES');
     const horaFormateada = fecha.toLocaleTimeString('es-ES');
@@ -31,8 +31,9 @@ class HtmlService {
     //console.log(reporteData.reporte.respuesta.persona.resumenReporte.fechaIngresoBD)
     const hawkContent = hawkService.generarMensajesHawk(reporteData);
     const codigoRazon = reporteData.reporte.respuesta.persona.scoreBuroCredito[0].codigoRazon;
-    console.log (typeof (score));
-    console.log(score, "score");
+    const empleosP= reporteData.reporte.respuesta.persona.empleos;
+    //console.log (typeof (score));
+    console.log(empleosP, "empleos");
     //console.log(reporteData.reporte.respuesta.persona.scoreBuroCredito);
     //console.log(codigoRazon, "codigo");
     //console.log('Reporte obtenido:', JSON.stringify(reporteData, null, 2));
@@ -174,55 +175,60 @@ class HtmlService {
                 `).join('')}
         </table>
 
-        <table class="striped">
+<table class="striped">
+    <tr>
+        <th class="table-title" colspan="16">DOMICILIO(S) DE EMPLEO(S) REPORTADO(S)</th>
+    </tr>
+    <tr>
+        <td colspan="2">COMPAÑIA</td>
+        <td>PUESTO</td>
+        <td>SALARIO</td>
+        <td>BASE</td>
+        <td>CALLE Y NUM</td>
+        <td>COLONIA</td>
+        <td>DELEG / MPIO</td>
+        <td>CIUDAD</td>
+        <td>EDO</td>
+        <td>CP</td>
+        <td>TEL</td>
+        <td>PAIS</td>
+        <td>REGISTRO EN BC</td>
+        <td>
+            <p>FECHA DE CONTRATA- CION</p>
+        </td>
+        <td>ULTIMO DIA DE EMPLEO</td>
+    </tr>
+    ${reporteData.reporte.respuesta.persona.empleos && reporteData.reporte.respuesta.persona.empleos.length > 0
+        ? reporteData.reporte.respuesta.persona.empleos.map((empleo, index) => `
             <tr>
-                <th class="table-title" colspan="16">DOMICILIO(S) DE EMPLEO(S)
-                    REPORTADO(S)
-                </th>
+                <td colspan="2">${empleo.nombreEmpresa || ''}</td>
+                <td>${empleo.cargo || ''}</td>
+                <td>${empleo.salario || ''}</td>
+                <td>${empleo.baseSalarial || ''}</td>
+                <td>${empleo.direccion1 || ''} ${empleo.direccion2 || ''}</td>
+                <td>${empleo.coloniaPoblacion || ''}</td>
+                <td>${empleo.delegacionMunicipio || ''}</td>
+                <td>${empleo.ciudad || ''}</td>
+                <td>${empleo.estado || ''}</td>
+                <td>${empleo.cp || ''}</td>
+                <td>${empleo.numeroTelefono || ''}</td>
+                <td>${empleo.codPais === 'MX' ? 'MÉXICO' : empleo.codPais || ''}</td>
+                <td>${empleo.fechaReportoEmpleo 
+                    ? `${empleo.fechaReportoEmpleo.slice(0, 2)}-${empleo.fechaReportoEmpleo.slice(2, 4)}-${empleo.fechaReportoEmpleo.slice(4)}` 
+                    : ''}</td>
+                <td>${empleo.fechaContratacion 
+                    ? `${empleo.fechaContratacion.slice(0, 2)}-${empleo.fechaContratacion.slice(2, 4)}-${empleo.fechaContratacion.slice(4)}` 
+                    : ''}</td>
+                <td>${empleo.fechaUltimoDiaEmpleo || ''}</td>
             </tr>
+        `).join('')
+        : `
             <tr>
-                <td colspan="2">COMPAÑIA</td>
-                <td>PUESTO</td>
-                <td>SALARIO</td>
-                <td>BASE</td>
-                <td>CALLE Y NUM</td>
-                <td>COLONIA</td>
-                <td>DELEG / MPIO</td>
-                <td>CIUDAD</td>
-                <td>EDO</td>
-                <td>CP</td>
-                <td>TEL</td>
-                <td>PAIS</td>
-                <td>REGISTRO EN BC</td>
-                <td>
-                    <p>FECHA DE CONTRATA- CION</p>
-                </td>
-                <td>ULTIMO DIA DE EMPLEO</td>
+                <td colspan="16" style="text-align: center;">NO EXISTEN REGISTROS DE EMPLEO</td>
             </tr>
-            ${reporteData.reporte.respuesta.persona.empleos.map((empleo, index) => `
-                <tr>
-                    <td colspan="2">${empleo.nombreEmpresa || ''}</td>
-                    <td>${empleo.cargo || ''}</td>
-                    <td>${empleo.salario || ''}</td>
-                    <td>${empleo.baseSalarial || ''}</td>
-                    <td>${empleo.direccion1 || ''} ${empleo.direccion2 || ''}</td>
-                    <td>${empleo.coloniaPoblacion || ''}</td>
-                    <td>${empleo.delegacionMunicipio || ''}</td>
-                    <td>${empleo.ciudad || ''}</td>
-                    <td>${empleo.estado || ''}</td>
-                    <td>${empleo.cp || ''}</td>
-                    <td>${empleo.numeroTelefono || ''}</td>
-                    <td>${empleo.codPais === 'MX' ? 'MÉXICO' : empleo.codPais || ''}</td>
-                    <td>${empleo.fechaReportoEmpleo 
-                        ? `${empleo.fechaReportoEmpleo.slice(0, 2)}-${empleo.fechaReportoEmpleo.slice(2, 4)}-${empleo.fechaReportoEmpleo.slice(4)}` 
-                        : ''}</td>
-                    <td>${empleo.fechaContratacion 
-                        ? `${empleo.fechaContratacion.slice(0, 2)}-${empleo.fechaContratacion.slice(2, 4)}-${empleo.fechaContratacion.slice(4)}` 
-                        : ''}</td>
-                    <td>${empleo.fechaUltimoDiaEmpleo || ''}</td>
-                </tr>
-                `).join('')}
-        </table>
+        `}
+</table>
+
             <table class="striped">
                 <tr>
                     <th class="table-title" colspan="7">MENSAJES</th>
