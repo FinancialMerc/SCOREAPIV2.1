@@ -12,6 +12,8 @@ const verifyNipRoutes = require('./src/routes/verifyNip');
 const generateLinkRoutes = require('./src/routes/generateLink');
 const formRoutes = require('./src/routes/validateForm');
 const validateTokenRoutes = require('./src/routes/validateForm');
+const expireTokenRoute = require('./src/routes/expireToken'); 
+
 
 app.use(express.json());
 app.use(cors());
@@ -63,6 +65,8 @@ app.use('/api/nip', verifyNipRoutes);
 app.use('/api/links', generateLinkRoutes);
 app.use('/api/forms', formRoutes);
 app.use('/api/links', validateTokenRoutes);
+app.use('/api/links', expireTokenRoute);
+
 
 
 const PORT = process.env.PORT || 3000;

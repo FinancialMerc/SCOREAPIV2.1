@@ -32,14 +32,19 @@ async function sendMail(to, subject, htmlContent) {
   async function sendNipEmail(email, code) {
     const subject = 'Tu Código de Autorización (NIP)';
     const htmlContent = `
-      <p>Hola,</p>
-      <p>Tu código de autorización (NIP) es:</p>
-      <h2 style="text-align: center; color: #007BFF;">${code}</h2>
-      <p>Por favor, utiliza este código para completar tu solicitud. El código expira en 10 minutos.</p>
-      <p>Si no solicitaste este código, ignora este mensaje.</p>
-      <p>Saludos,</p>
-      <p>El equipo de [Tu Empresa]</p>
-    `;
+    <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; border-radius: 8px; color: #333;">
+      <p style="font-size: 18px; color: #343a40;">Hola,</p>
+      <p style="font-size: 16px; color: #343a40;">Tu código de autorización (NIP) es:</p>
+      <h2 style="text-align: center; color: #007BFF; font-size: 30px; font-weight: bold; margin: 20px 0;">${code}</h2>
+      <p style="font-size: 16px; color: #495057;">Por favor, utiliza este código para completar tu solicitud. El código expira en 10 minutos.</p>
+      <p style="font-size: 16px; color: #495057;">Si no solicitaste este código, ignora este mensaje.</p>
+      <p style="font-size: 16px; font-weight: bold; color: #6c757d;">Saludos,</p>
+      <div style="margin-top: 30px; background-color: #007BFF; padding: 10px; border-radius: 5px; text-align: center;">
+        <p style="color: white; font-size: 16px; margin: 0;">Si tienes preguntas, no dudes en ponerte en contacto con nosotros.</p>
+      </div>
+    </div>
+  `;
+  
   
     return sendMail(email, subject, htmlContent);
   }

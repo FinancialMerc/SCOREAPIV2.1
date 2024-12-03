@@ -31,7 +31,7 @@ router.post('/generate-link', async (req, res) => {
         });
 
         res.json({
-            link: `${process.env.FRONTEND_URL || 'http://localhost:4002'}/teams/${teamSlug}/buro/reportes/personas-fisicas-nip?token=${token}`,
+            link: `${process.env.FRONTEND_URL || 'https://financialmerc.scorecapital.com.mx'}/teams/${teamSlug}/buro/reportes/form-share-nip?token=${token}`,
             expiresAt: expirationTime,
             formLink,
         });

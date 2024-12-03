@@ -7,9 +7,9 @@ const { generateRandomCode } = require('../utils/codeGenerator');
 const NipCode = require('../models/nipCode');
 
 router.post('/generate-nip', async (req, res) => {
-  const { email, userId } = req.body;
+  const { email } = req.body;
 
-  if (!email || !userId) {
+  if (!email) {
     return res.status(400).json({ message: 'Faltan campos requeridos (email o userId)' });
   }
 
@@ -21,7 +21,6 @@ router.post('/generate-nip', async (req, res) => {
       email,
       code,
       expiresAt,
-      userId,
     });
 
     console.log(newNip); // Para verificar que se crea correctamente en la base de datos
