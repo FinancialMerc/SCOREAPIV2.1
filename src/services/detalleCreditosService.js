@@ -271,7 +271,7 @@ function getTipoContrato(tipoContrato) {
         'PA': 'Préstamo para Personas Físicas con Actividad Empresarial (PFAE)',
         'PB': 'Editorial',
         'PG': 'PGUE - Préstamo como garantía de unidades industriales para PFAE',
-        'PE': 'Préstamo personal',
+        'PL': 'Préstamo personal',
         'PN': 'Préstamo de nómina',
         'PQ': 'Quirografario (PFAE)',
         'PR': 'Prendario (PFAE)',

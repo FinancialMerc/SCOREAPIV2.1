@@ -6,37 +6,34 @@ const ResumenCreditosService = require('./resumenCreditos');
 const detalleCreditosService = require('./detalleCreditosService');
 const puppeteer = require('puppeteer');
 const detalleConsultasService = require('./detalleConsulta');
+//const AnalyzeCreditReportFromJson = require('./analyzeCreditReport');
 
 class HtmlService {
     async generarHtml(reporteData, filePath) {
-    //const jsonFilePath = path.join(__dirname, '../Downloads/reporteData.json');
-    //fs.writeFileSync(jsonFilePath, JSON.stringify(reporteData, null, 2), 'utf8');
+    const jsonFilePath = path.join(__dirname, '../Downloads/reporteData.json');
+    fs.writeFileSync(jsonFilePath, JSON.stringify(reporteData, null, 2), 'utf8');
     const fecha = new Date();
     const fechaFormateada = fecha.toLocaleDateString('es-ES');
     const horaFormateada = fecha.toLocaleTimeString('es-ES');
     const detalleCreditosHtml = detalleCreditosService.obtenerDetalleCreditos(reporteData.reporte.respuesta.persona.cuentas);
+    //const analisis = AnalyzeCreditReportFromJson.analyzeCreditReportFromJson(reporteData);
     const resumenHtml = ResumenCreditosService.generarHtmlResumen(reporteData.reporte.respuesta.persona.cuentas);
     const mensajesContent = mensajesService.generarMensajesAlerta(reporteData);
     let score = parseInt(reporteData.reporte.respuesta.persona.scoreBuroCredito[0].valorScore, 10);
     let icc = parseInt(reporteData.reporte.respuesta.persona.scoreBuroCredito[1].valorScore, 10);
     //let score = parseInt(reporteData.reporte.respuesta.persona.scoreBuroCredito[0].valorScore).toString();
     //let icc = parseInt(reporteData.reporte.respuesta.persona.scoreBuroCredito[1].valorScore).toString();
-       
     const consultas = reporteData.reporte.respuesta.persona.consultaEfectuadas;
     const detalleConsultasHtml = detalleConsultasService.generarHtmlDetalleConsultas(consultas);
     //console.log('Resumen:', consultas);
-    const cuentasCerradas = reporteData.reporte.respuesta.persona.cuentas;
+   //const cuentasCerradas = reporteData.reporte.respuesta.persona.cuentas;
     //const resumenCuentasCerradas = ResumenCreditosService.summaryClosedAccounts(cuentasCerradas);
     const persona = reporteData.reporte.respuesta.persona.nombre;
     //console.log(reporteData.reporte.respuesta.persona.resumenReporte.fechaIngresoBD)
     const hawkContent = hawkService.generarMensajesHawk(reporteData);
     const codigoRazon = reporteData.reporte.respuesta.persona.scoreBuroCredito[0].codigoRazon;
     const empleosP= reporteData.reporte.respuesta.persona.empleos;
-    //console.log (typeof (score));
-    console.log(empleosP, "empleos");
-    //console.log(reporteData.reporte.respuesta.persona.scoreBuroCredito);
-    //console.log(codigoRazon, "codigo");
-    //console.log('Reporte obtenido:', JSON.stringify(reporteData, null, 2));
+
     function formatDateString(dateString) {
         if (dateString) {
             const day = dateString.slice(0, 2);
